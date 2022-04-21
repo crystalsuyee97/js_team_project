@@ -1,0 +1,25 @@
+body {
+  background-color: aliceblue;
+}
+
+.header{
+  position: relative;
+  padding: 20px;
+  text-align: center;
+}
+
+.textBox {
+  width: 50%;
+  height: 50px;
+  margin: auto
+}
+
+.textInput {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cipherColumns {
+  margin: 20px 10px;
+}
