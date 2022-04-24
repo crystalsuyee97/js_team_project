@@ -1,8 +1,6 @@
 window.onload = function() {
-  var currentDate = new Date();
-  var quote = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
-  document.getElementById("date").innerHTML = currentDate.toLocaleDateString() + " " + currentDate.toLocaleTimeString();
-  document.getElementById("quote").innerHTML = quote;
+  dateTime();
+  getQuote();
 
   var rotationSetting = document.getElementById("caesarSetting");
   rotationSetting.addEventListener('input', function handleChange(event) {
@@ -13,15 +11,41 @@ window.onload = function() {
   newInput.addEventListener('input', function handleChange(event) {
     newInput = event.target.value;
     document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
+    document.getElementById("rot13Text").innerHTML = rot13decoder(newInput);
   });
+  var caesarInput = document.getElementById("caesarText");
+  caesarInput.addEventListener('input', function handleChange(event) {
+    caesarInput = event.target.value;
+    document.getElementById("textInput").innerHTML = caesarCipher(caesarInput, Number(rotationSetting.value));
+  })
 }
 
-// const alpha = Array.from(Array(26)).map((e, i) => i + 65);
-// const alphabet = alpha.map((x) => String.fromCharCode(x).toLocaleLowerCase());
-// const stringArray = (inputText.toLowerCase()).split("")
-// console.log(stringArray)
-// console.log(inputText.charCodeAt())
+// changing quote in footer
+var quotes = [
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+  "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+],
+index=-1;
+function getQuote(){
+  index = (index + 1) % quotes.length;
+  document.getElementById("quote").innerHTML = quotes[index];
+  setTimeout(getQuote, 5000);
+}
 
+// realtime clock
+function refreshRate() {
+  var refresh = 1000;
+  setTimeout('dateTime()', refresh);
+}
+function dateTime() {
+  var currentDate = new Date();
+  document.getElementById("date").innerHTML = currentDate.toUTCString();
+  refreshRate();
+}
+
+// caesar cipher
 function caesarCipher(value, n) {
   let tempArray = [];
   for (let i = 0; i < value.length; i++) {
@@ -35,6 +59,31 @@ function caesarCipher(value, n) {
     }
   }
   return tempArray.join("");
+}
+
+// const alpha = Array.from(Array(26)).map((e, i) => i + 65);
+// creates array of alphabets rearranged
+// const firstUppercase = alpha.map((x) => String.fromCharCode(x));
+// const secondUppercase = firstUppercase.splice(13);
+// const rot13Uppercase = [...secondUppercase, ...firstUppercase];
+// const firstLowercase = alpha.map((x) => String.fromCharCode(x).toLocaleLowerCase());
+// const secondLowercase = firstLowercase.splice(13);
+// const rot13Lowercase = [...secondLowercase, ...firstLowercase];
+
+//rot13 decoder
+function rot13decoder(value) {
+  let tempArray = [];
+for (let i = 0; i < value.length; i++) {
+  var characterCode = value.charCodeAt(i);
+  if ((characterCode >=65 && characterCode <= 77) || (characterCode >=97 && characterCode <= 109)) {
+    tempArray.push(String.fromCharCode(characterCode + 13));
+  } else if ((characterCode >=78 && characterCode <= 90) || (characterCode >=110 && characterCode <= 122)) {
+    tempArray.push(String.fromCharCode(characterCode - 13));
+  } else {
+    tempArray.push(String.fromCharCode(characterCode));
+  }
+}
+return tempArray.join("");
 }
 
 class Header extends HTMLElement {
@@ -68,18 +117,14 @@ class Columns extends HTMLElement {
       </div>
       <textarea type="text" id="caesarText"></textarea> 
     </span class="cipherColumn">
-    <div class="cipherColumn">
-      <span>
-        <p class="columnTitle">ROT13 Cipher</p>
-        <textarea type="text"></textarea> 
-      </span> 
-    </div> 
-    <div class="cipherColumn">
-      <span>
-        <p class="columnTitle">Vigenere Cipher</p>
-        <textarea type="text"></textarea> 
-      </span> 
-    </div>
+    <span class="cipherColumn">
+      <p class="columnTitle">ROT13 Cipher</p>
+      <textarea type="text" id="rot13Text"></textarea> 
+    </span> 
+    <span class="cipherColumn">
+      <p class="columnTitle">Vigenere Cipher</p>
+      <textarea type="text" id="vigText"></textarea> 
+    </span> 
     `;
   }
 }
