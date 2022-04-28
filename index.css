@@ -1,6 +1,11 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 body {
   background-color: aliceblue;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
 }
 
@@ -10,8 +15,7 @@ main-header {
 }
 
 main-footer {
-  min-height: 20px;
-  padding: 50px;
+  margin: 50px;
 }
 
 body {
@@ -46,15 +50,14 @@ textarea {
 }
 
 .cipherColumns {
-  width: auto;
   margin: 20px;
 }
 
 .cipherColumn {
-  position: relative;
-  float: left;
+  display: inline-table;
   width: 30%;
-  height: 500px;
+  justify-content: space-evenly center;
+  /* margin-right: 30px; */
 }
 
 .cipherBody {
@@ -74,16 +77,91 @@ textarea {
   text-align: justify;
   height: 100%;
   width: 40%;
+  box-sizing: border-box;
 }
 
 #caesarText, #rot13Text, #vigText {
   width: 100%;
+  box-sizing: border-box;
 }
 
-label {
+.textBoxInput {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   text-align: left;
   margin-bottom: 10px;
+}
+
+.switch {
+  position: relative;
+  float: right;
+  width: 60px;
+  height: 34px;
+  margin-top: 8px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: #2196F3;
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  .cipherBody {
+    margin-top: 10vh;
+    height: auto;
+  }
+
+  .text {
+    width: 80%;
+  }
+  .cipherColumn {
+    display: inline-table;
+    width: 80%;
+    margin-left: 6.5%;
+  }
+  .cipherColumns {
+    width: 100%;
+    margin: 20px;
+  }
 }

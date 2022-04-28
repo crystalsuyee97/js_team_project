@@ -1,25 +1,3 @@
-window.onload = function() {
-  dateTime();
-  getQuote();
-
-  var rotationSetting = document.getElementById("caesarSetting");
-  rotationSetting.addEventListener('input', function handleChange(event) {
-    rotationSetting.value = event.target.value;
-    document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
-  })
-  var newInput = document.getElementById("textInput");
-  newInput.addEventListener('input', function handleChange(event) {
-    newInput = event.target.value;
-    document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
-    document.getElementById("rot13Text").innerHTML = rot13decoder(newInput);
-  });
-  var caesarInput = document.getElementById("caesarText");
-  caesarInput.addEventListener('input', function handleChange(event) {
-    caesarInput = event.target.value;
-    document.getElementById("textInput").innerHTML = caesarCipher(caesarInput, Number(rotationSetting.value));
-  })
-}
-
 // changing quote in footer
 var quotes = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -46,7 +24,7 @@ function dateTime() {
 }
 
 // caesar cipher
-function caesarCipher(value, n) {
+function caesarEncode(value, n) {
   let tempArray = [];
   for (let i = 0; i < value.length; i++) {
     var characterCode = value.charCodeAt(i);
@@ -61,6 +39,33 @@ function caesarCipher(value, n) {
   return tempArray.join("");
 }
 
+// NOT working quite right. reevaluate the math
+function caesarDecode(value, n) {
+  let tempArray = [];
+  for (let i = 0; i < value.length; i++) {
+    var characterCode = value.charCodeAt(i);
+    if (characterCode > 64 && characterCode < 91) {
+      tempArray.push(String.fromCharCode(((characterCode - 65 - n) % 26) + 64));
+    } else if (characterCode > 96 && characterCode < 123) {
+      tempArray.push(String.fromCharCode(((characterCode - 97 - n) % 26) + 97));
+    } else {
+      tempArray.push(String.fromCharCode(characterCode));
+    }
+  }
+  return tempArray.join("");
+}
+
+function caesarCipher(value, n) {
+  var tempValue = "";
+  if (document.getElementById("caesarSwitch").checked) {
+    tempValue = caesarDecode(value, n)
+  }
+  if (!document.getElementById("caesarSwitch").checked) {
+    tempValue = caesarEncode(value, n)
+  }
+  return tempValue;
+}
+
 // const alpha = Array.from(Array(26)).map((e, i) => i + 65);
 // creates array of alphabets rearranged
 // const firstUppercase = alpha.map((x) => String.fromCharCode(x));
@@ -70,65 +75,100 @@ function caesarCipher(value, n) {
 // const secondLowercase = firstLowercase.splice(13);
 // const rot13Lowercase = [...secondLowercase, ...firstLowercase];
 
-//rot13 decoder
-function rot13decoder(value) {
+//rot13 cipher
+function rot13cipher(value) {
   let tempArray = [];
-for (let i = 0; i < value.length; i++) {
-  var characterCode = value.charCodeAt(i);
-  if ((characterCode >=65 && characterCode <= 77) || (characterCode >=97 && characterCode <= 109)) {
-    tempArray.push(String.fromCharCode(characterCode + 13));
-  } else if ((characterCode >=78 && characterCode <= 90) || (characterCode >=110 && characterCode <= 122)) {
-    tempArray.push(String.fromCharCode(characterCode - 13));
-  } else {
-    tempArray.push(String.fromCharCode(characterCode));
+  for (let i = 0; i < value.length; i++) {
+    var characterCode = value.charCodeAt(i);
+    if ((characterCode >=65 && characterCode <= 77) || (characterCode >=97 && characterCode <= 109)) {
+      tempArray.push(String.fromCharCode(characterCode + 13));
+    } else if ((characterCode >=78 && characterCode <= 90) || (characterCode >=110 && characterCode <= 122)) {
+      tempArray.push(String.fromCharCode(characterCode - 13));
+    } else {
+      tempArray.push(String.fromCharCode(characterCode));
+    }
   }
-}
-return tempArray.join("");
+  return tempArray.join("");
 }
 
-class Header extends HTMLElement {
-  connectedCallback() {
-    this.innerHTML = `
-      <header>        
-        <h1 class="headerText">Welcome to DPT Vanilla Cipher Decoder/Encoder</h1>    
-      </header>   
-    `;
+// vigenere cipher
+function vigenereCipher(value, code) {
+  var tempValue = "";
+  if (document.getElementById("vigSwitch").checked) {
+    tempValue = vigenereDecoder(value.toUpperCase().replace(/\s/g, ''), code);
   }
+  if (!document.getElementById("vigSwitch").checked) {
+    tempValue = vigenereEncoder(value.toUpperCase().replace(/\s/g, ''), code);
+  }
+  return tempValue;
 }
 
-class Footer extends HTMLElement {
-  connectedCallback() {
-    this.innerHTML = `
-    <footer>
-      <span id="date"></span>
-      <span id ="quote"></span>
-    </footer>  
-    `;
+function generateKeyCode(value, code) {
+  if (code.length < value.length) {
+    const addKeyNum = value.length - code.length;
+    for (let i = 0; i < addKeyNum; i++) {
+      code = code.concat(code[i])
+    }
+  } else if (code.length > value.length) {
+    code = code.slice(0, value.length);
   }
+  return code;
 }
 
-class Columns extends HTMLElement {
-  connectedCallback() {
-    this.innerHTML = `
-    <span class="cipherColumn">
-      <p class="columnTitle">Caesar Cipher</p>
-      <div class="columnTitle">Rotation setting: 
-        <input type="number" min=0 id="caesarSetting" value="0"></input>
-      </div>
-      <textarea type="text" id="caesarText"></textarea> 
-    </span class="cipherColumn">
-    <span class="cipherColumn">
-      <p class="columnTitle">ROT13 Cipher</p>
-      <textarea type="text" id="rot13Text"></textarea> 
-    </span> 
-    <span class="cipherColumn">
-      <p class="columnTitle">Vigenere Cipher</p>
-      <textarea type="text" id="vigText"></textarea> 
-    </span> 
-    `;
+function vigenereEncoder(value, code) {
+  code = generateKeyCode(value, code);
+  let tempArray = [];
+  var offset;
+  for (let i = 0; i < code.length; i++) {
+    offset = code.charCodeAt(i) - "A".charCodeAt(0);
+    var characterCode = value.charCodeAt(i);
+    if (characterCode > 64 && characterCode < 91) {
+      tempArray.push(String.fromCharCode(((characterCode - 65 + offset) % 26) + 65));
+    }
   }
+  return tempArray.join("");
 }
 
-customElements.define('main-header', Header);
-customElements.define('main-footer', Footer);
-customElements.define('cipher-columns', Columns);
+// decode func not working quite right
+function vigenereDecoder(value, code) {
+  code = generateKeyCode(value, code);
+  let tempArray = [];
+  var offset;
+  for (let i = 0; i < code.length; i++) {
+    offset = code.charCodeAt(i) - "A".charCodeAt(0);
+    var characterCode = value.charCodeAt(i);
+    if (characterCode > 64 && characterCode < 91) {
+      tempArray.push(String.fromCharCode(((characterCode - 65 - offset) % 26) + 65));
+    }
+  }
+  return tempArray.join("");
+}
+
+window.onload = function() {
+  dateTime();
+  getQuote();
+
+  var rotationSetting = document.getElementById("caesarSetting");
+  rotationSetting.addEventListener('input', function handleChange(event) {
+    rotationSetting.value = event.target.value;
+    document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
+  })
+  var newInput = document.getElementById("textInput");
+  var keyWord = document.getElementById("keyWord").value;
+  newInput.addEventListener('input', function handleChange(event) {
+    newInput = event.target.value;
+    document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
+    document.getElementById("rot13Text").innerHTML = rot13cipher(newInput);
+    document.getElementById("vigText").innerHTML = vigenereCipher(newInput, keyWord);
+  });
+  document.getElementById("caesarSwitch").addEventListener('input', function handleChange() {
+    document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
+  })
+  document.getElementById("vigSwitch").addEventListener('input', function handleChange() {
+    document.getElementById("vigText").innerHTML = vigenereCipher(newInput, keyWord);
+  })
+  document.getElementById("keyWord").addEventListener('input', function handleChange(event) {
+    keyWord = event.target.value;
+    document.getElementById("vigText").innerHTML = vigenereCipher(newInput, keyWord);
+  })
+}
