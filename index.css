@@ -10,8 +10,12 @@ body {
 }
 
 main-header {
+  position: fixed;
+  width: 100%;
   min-height: 20px;
   padding: 20px;
+  background-color: aliceblue;
+  /* transition: 0.2s; */
 }
 
 main-footer {
@@ -19,7 +23,7 @@ main-footer {
 }
 
 body {
-  display: flex; 
+  display: flex;
   flex-direction: column;
 }
 
@@ -28,7 +32,6 @@ main-footer {
 }
 
 .headerText{
-  position: relative;
   text-align: center;
 }
 
@@ -44,7 +47,7 @@ textarea {
 }
 
 .textInput {
-  position: relative;
+  /* position: relative; */
   width: 100%;
   height: 150px;
 }
@@ -53,15 +56,23 @@ textarea {
   margin: 20px;
 }
 
+cipher-columns {
+  display: flex;
+  grid-template-columns: repeat(3, auto);
+  display: grid;
+  justify-items: space-between;
+}
+
 .cipherColumn {
-  display: inline-table;
-  width: 30%;
-  justify-content: space-evenly center;
-  /* margin-right: 30px; */
+  /* width: 100%; */
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .cipherBody {
   height: 100%;
+  margin:auto 0;
 }
 
 .columnTitle {
@@ -148,7 +159,7 @@ input:checked + .slider:before {
 @media only screen and (max-width: 768px) {
   /* For mobile phones: */
   .cipherBody {
-    margin-top: 10vh;
+    margin-top: 15vh;
     height: auto;
   }
 
@@ -158,10 +169,15 @@ input:checked + .slider:before {
   .cipherColumn {
     display: inline-table;
     width: 80%;
-    margin-left: 6.5%;
   }
   .cipherColumns {
     width: 100%;
-    margin: 20px;
+    margin: 5vh 0;
+  }
+  cipher-columns {
+    display: flex;
+    grid-template-columns: repeat(1, auto);
+    display: grid;
+    justify-items: center;
   }
 }

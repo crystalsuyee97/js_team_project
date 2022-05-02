@@ -1,3 +1,4 @@
+// import { checkLowercase } from "./utils/helpers";
 // changing quote in footer
 var quotes = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
@@ -39,15 +40,14 @@ function caesarEncode(value, n) {
   return tempArray.join("");
 }
 
-// NOT working quite right. reevaluate the math
 function caesarDecode(value, n) {
   let tempArray = [];
   for (let i = 0; i < value.length; i++) {
     var characterCode = value.charCodeAt(i);
     if (characterCode > 64 && characterCode < 91) {
-      tempArray.push(String.fromCharCode(((characterCode - 65 - n) % 26) + 64));
+      tempArray.push(String.fromCharCode(((characterCode - 90 - n) % 26) + 90));
     } else if (characterCode > 96 && characterCode < 123) {
-      tempArray.push(String.fromCharCode(((characterCode - 97 - n) % 26) + 97));
+      tempArray.push(String.fromCharCode(((characterCode - 122 - n) % 26) + 122));
     } else {
       tempArray.push(String.fromCharCode(characterCode));
     }
@@ -63,8 +63,18 @@ function caesarCipher(value, n) {
   if (!document.getElementById("caesarSwitch").checked) {
     tempValue = caesarEncode(value, n)
   }
-  return tempValue;
+  document.getElementById("caesarText").innerHTML = tempValue;
 }
+
+window.addEventListener('input', function handleChange(event) {
+  console.log(event.target.id)
+  let input = document.getElementById("textInput").value;
+  let rotationSetting = Number(document.getElementById("caesarSetting").value);
+  let code = this.document.getElementById("keyWord").value;
+  caesarCipher(input, rotationSetting);
+  rot13cipher(input);
+  vigenereCipher(input, code);
+})
 
 // const alpha = Array.from(Array(26)).map((e, i) => i + 65);
 // creates array of alphabets rearranged
@@ -88,7 +98,7 @@ function rot13cipher(value) {
       tempArray.push(String.fromCharCode(characterCode));
     }
   }
-  return tempArray.join("");
+  document.getElementById("rot13Text").innerHTML = tempArray.join("");
 }
 
 // vigenere cipher
@@ -100,7 +110,8 @@ function vigenereCipher(value, code) {
   if (!document.getElementById("vigSwitch").checked) {
     tempValue = vigenereEncoder(value.toUpperCase().replace(/\s/g, ''), code);
   }
-  return tempValue;
+  console.log(tempValue)
+  document.getElementById("vigText").innerHTML = tempValue;
 }
 
 function generateKeyCode(value, code) {
@@ -138,37 +149,21 @@ function vigenereDecoder(value, code) {
     offset = code.charCodeAt(i) - "A".charCodeAt(0);
     var characterCode = value.charCodeAt(i);
     if (characterCode > 64 && characterCode < 91) {
-      tempArray.push(String.fromCharCode(((characterCode - 65 - offset) % 26) + 65));
+      tempArray.push(String.fromCharCode(((characterCode - 90 - offset) % 26) + 90));
     }
   }
   return tempArray.join("");
 }
 
-window.onload = function() {
-  dateTime();
-  getQuote();
+// window.onscroll = function() {scrollFunction()};
 
-  var rotationSetting = document.getElementById("caesarSetting");
-  rotationSetting.addEventListener('input', function handleChange(event) {
-    rotationSetting.value = event.target.value;
-    document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
-  })
-  var newInput = document.getElementById("textInput");
-  var keyWord = document.getElementById("keyWord").value;
-  newInput.addEventListener('input', function handleChange(event) {
-    newInput = event.target.value;
-    document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
-    document.getElementById("rot13Text").innerHTML = rot13cipher(newInput);
-    document.getElementById("vigText").innerHTML = vigenereCipher(newInput, keyWord);
-  });
-  document.getElementById("caesarSwitch").addEventListener('input', function handleChange() {
-    document.getElementById("caesarText").innerHTML = caesarCipher(newInput, Number(rotationSetting.value));
-  })
-  document.getElementById("vigSwitch").addEventListener('input', function handleChange() {
-    document.getElementById("vigText").innerHTML = vigenereCipher(newInput, keyWord);
-  })
-  document.getElementById("keyWord").addEventListener('input', function handleChange(event) {
-    keyWord = event.target.value;
-    document.getElementById("vigText").innerHTML = vigenereCipher(newInput, keyWord);
-  })
-}
+// function scrollFunction() {
+//   if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+//     document.getElementById("header").style.fontSize = "30px";
+//   } else {
+//     document.getElementById("header").style.fontSize = "50px";
+//   }
+// }
+
+dateTime();
+getQuote();
