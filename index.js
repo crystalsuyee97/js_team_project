@@ -66,16 +66,6 @@ function caesarCipher(value, n) {
   document.getElementById("caesarText").innerHTML = tempValue;
 }
 
-window.addEventListener('input', function handleChange(event) {
-  console.log(event.target.id)
-  let input = document.getElementById("textInput").value;
-  let rotationSetting = Number(document.getElementById("caesarSetting").value);
-  let code = this.document.getElementById("keyWord").value;
-  caesarCipher(input, rotationSetting);
-  rot13cipher(input);
-  vigenereCipher(input, code);
-})
-
 //rot13 cipher
 function rot13cipher(value) {
   let tempArray = [];
@@ -131,7 +121,6 @@ function vigenereEncoder(value, code) {
   return tempArray.join("");
 }
 
-// decode func not working quite right
 function vigenereDecoder(value, code) {
   code = generateKeyCode(value, code);
   let tempArray = [];
@@ -158,3 +147,13 @@ function vigenereDecoder(value, code) {
 
 dateTime();
 getQuote();
+
+window.addEventListener('input', function handleChange(event) {
+  console.log(event.target.id)
+  let input = document.getElementById("textInput").value;
+  let rotationSetting = Number(document.getElementById("caesarSetting").value);
+  let code = this.document.getElementById("keyWord").value;
+  caesarCipher(input, rotationSetting);
+  rot13cipher(input);
+  vigenereCipher(input, code);
+})
