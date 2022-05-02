@@ -76,15 +76,6 @@ window.addEventListener('input', function handleChange(event) {
   vigenereCipher(input, code);
 })
 
-// const alpha = Array.from(Array(26)).map((e, i) => i + 65);
-// creates array of alphabets rearranged
-// const firstUppercase = alpha.map((x) => String.fromCharCode(x));
-// const secondUppercase = firstUppercase.splice(13);
-// const rot13Uppercase = [...secondUppercase, ...firstUppercase];
-// const firstLowercase = alpha.map((x) => String.fromCharCode(x).toLocaleLowerCase());
-// const secondLowercase = firstLowercase.splice(13);
-// const rot13Lowercase = [...secondLowercase, ...firstLowercase];
-
 //rot13 cipher
 function rot13cipher(value) {
   let tempArray = [];
