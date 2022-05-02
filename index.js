@@ -91,7 +91,6 @@ function vigenereCipher(value, code) {
   if (!document.getElementById("vigSwitch").checked) {
     tempValue = vigenereEncoder(value.toUpperCase().replace(/\s/g, ''), code);
   }
-  console.log(tempValue)
   document.getElementById("vigText").innerHTML = tempValue;
 }
 
@@ -149,7 +148,6 @@ dateTime();
 getQuote();
 
 window.addEventListener('input', function handleChange(event) {
-  console.log(event.target.id)
   let input = document.getElementById("textInput").value;
   let rotationSetting = Number(document.getElementById("caesarSetting").value);
   let code = this.document.getElementById("keyWord").value;
