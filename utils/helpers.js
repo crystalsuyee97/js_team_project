@@ -1,3 +1,10 @@
-export const checkUppercase = (characterCode) => characterCode > 64 && characterCode < 91;
-
-export const checkLowercase = (characterCode) => characterCode > 96 && characterCode < 123;
+// realtime clock
+function refreshRate() {
+  var refresh = 1000;
+  setTimeout('dateTime()', refresh);
+}
+function dateTime() {
+  var currentDate = new Date();
+  document.getElementById("date").innerHTML = currentDate.toUTCString();
+  refreshRate();
+}
